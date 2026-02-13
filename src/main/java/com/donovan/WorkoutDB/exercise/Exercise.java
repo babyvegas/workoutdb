@@ -5,6 +5,7 @@ public record Exercise(
 		String name,
 		String instructions,
 		String primaryMuscle,
-		String secondaryMuscle
+		String secondaryMuscle,
+		String equipment
 ) {
 }

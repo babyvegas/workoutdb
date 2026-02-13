@@ -7,8 +7,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -154,8 +156,9 @@ public class WgerImportService {
 		}
 
 		String secondaryMuscle = extractMuscleName(exerciseNode.path("muscles_secondary"), muscleLookup);
+		String equipment = extractEquipment(exerciseNode.path("equipment"));
 
-		return Optional.of(new ExerciseRequest(name, instructions, primaryMuscle, secondaryMuscle));
+		return Optional.of(new ExerciseRequest(name, instructions, primaryMuscle, secondaryMuscle, equipment));
 	}
 
 	private String extractMuscleName(JsonNode musclesNode, Map<Integer, String> muscleLookup) {
@@ -216,6 +219,36 @@ public class WgerImportService {
 		}
 
 		return firstAvailable;
+	}
+
+	private String extractEquipment(JsonNode equipmentNode) {
+		if (!equipmentNode.isArray() || equipmentNode.isEmpty()) {
+			return null;
+		}
+
+		List<String> equipments = new ArrayList<>();
+		for (JsonNode item : equipmentNode) {
+			String name;
+			if (item.isObject()) {
+				name = firstNonBlank(
+						textOrNull(item.path("name")),
+						textOrNull(item.path("name_en"))
+				);
+			} else {
+				name = textOrNull(item);
+			}
+
+			name = cleanText(name);
+			if (name != null && !equipments.contains(name)) {
+				equipments.add(name);
+			}
+		}
+
+		if (equipments.isEmpty()) {
+			return null;
+		}
+
+		return String.join(", ", equipments);
 	}
 
 	private JsonNode fetchJson(String url) {

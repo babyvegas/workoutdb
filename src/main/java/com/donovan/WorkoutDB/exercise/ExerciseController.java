@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,15 @@ public class ExerciseController {
 	}
 
 	@GetMapping
-	public List<Exercise> getAll() {
+	public List<Exercise> getAll(
+			@RequestParam(required = false) String muscle,
+			@RequestParam(required = false) String primaryMuscle,
+			@RequestParam(required = false) String secondaryMuscle,
+			@RequestParam(required = false) String equipment
+	) {
+		if (hasAnyFilter(muscle, primaryMuscle, secondaryMuscle, equipment)) {
+			return exerciseService.getByFilters(muscle, primaryMuscle, secondaryMuscle, equipment);
+		}
 		return exerciseService.getAll();
 	}
 
@@ -49,5 +58,13 @@ public class ExerciseController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long id) {
 		exerciseService.delete(id);
+	}
+
+	private boolean hasAnyFilter(String muscle, String primaryMuscle, String secondaryMuscle, String equipment) {
+		return hasText(muscle) || hasText(primaryMuscle) || hasText(secondaryMuscle) || hasText(equipment);
+	}
+
+	private boolean hasText(String value) {
+		return value != null && !value.isBlank();
 	}
 }

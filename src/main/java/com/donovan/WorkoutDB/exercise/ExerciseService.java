@@ -18,6 +18,15 @@ public class ExerciseService {
 		return exerciseRepository.findAll();
 	}
 
+	public List<Exercise> getByFilters(
+			String muscle,
+			String primaryMuscle,
+			String secondaryMuscle,
+			String equipment
+	) {
+		return exerciseRepository.findByFilters(muscle, primaryMuscle, secondaryMuscle, equipment);
+	}
+
 	public Exercise getById(Long id) {
 		return exerciseRepository.findById(id)
 				.orElseThrow(() -> new ExerciseNotFoundException(id));
@@ -63,11 +72,20 @@ public class ExerciseService {
 			}
 		}
 
+		String equipment = request.equipment();
+		if (equipment != null) {
+			equipment = equipment.trim();
+			if (equipment.isBlank()) {
+				equipment = null;
+			}
+		}
+
 		return new ExerciseRequest(
 				request.name().trim(),
 				request.instructions().trim(),
 				request.primaryMuscle().trim(),
-				secondaryMuscle
+				secondaryMuscle,
+				equipment
 		);
 	}
 }

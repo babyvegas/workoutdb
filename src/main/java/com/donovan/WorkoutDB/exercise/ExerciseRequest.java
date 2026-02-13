@@ -9,6 +9,7 @@ public record ExerciseRequest(
 		String instructions,
 		@NotBlank(message = "primaryMuscle is required")
 		String primaryMuscle,
-		String secondaryMuscle
+		String secondaryMuscle,
+		String equipment
 ) {
 }

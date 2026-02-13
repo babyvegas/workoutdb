@@ -28,13 +28,18 @@ Al arrancar, se crea automáticamente la base local y se cargan ejercicios inici
   "name": "Bench Press",
   "instructions": "Acuestate en un banco...",
   "primaryMuscle": "Pectoral",
-  "secondaryMuscle": "Triceps"
+  "secondaryMuscle": "Triceps",
+  "equipment": "Barbell, Bench"
 }
 ```
 
 ## Endpoints MVP
 
 - `GET /api/exercises` -> lista todos los ejercicios.
+- `GET /api/exercises?muscle=...` -> filtra por músculo (principal o secundario).
+- `GET /api/exercises?primaryMuscle=...` -> filtra por músculo principal.
+- `GET /api/exercises?secondaryMuscle=...` -> filtra por músculo secundario.
+- `GET /api/exercises?equipment=...` -> filtra por tipo de equipo/máquina.
 - `GET /api/exercises/{id}` -> devuelve un ejercicio por ID.
 - `POST /api/exercises` -> crea un ejercicio.
 - `PUT /api/exercises/{id}` -> actualiza un ejercicio.
@@ -50,7 +55,8 @@ curl -X POST http://localhost:8080/api/exercises \
     "name": "Curl Martillo",
     "instructions": "De pie, flexiona el codo con agarre neutro y controla la bajada.",
     "primaryMuscle": "Biceps",
-    "secondaryMuscle": "Antebrazo"
+    "secondaryMuscle": "Antebrazo",
+    "equipment": "Mancuernas"
   }'
 ```
 
@@ -65,3 +71,4 @@ curl -X POST "http://localhost:8080/api/exercises/import/wger?language=2&limit=3
 - `language`: id de idioma en wger (por ejemplo `2` suele ser inglés).
 - `limit`: cantidad máxima a intentar importar (1-2000).
 - El importador evita duplicados por nombre en tu base local.
+- El importador guarda `equipment` (tipo de máquina/equipo) cuando wger lo reporta.
