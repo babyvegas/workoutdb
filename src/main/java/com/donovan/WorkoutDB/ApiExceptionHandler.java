@@ -1,7 +1,9 @@
 package com.donovan.WorkoutDB;
 
 import com.donovan.WorkoutDB.exercise.DuplicateExerciseException;
+import com.donovan.WorkoutDB.exercise.ExternalApiException;
 import com.donovan.WorkoutDB.exercise.ExerciseNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +37,22 @@ public class ApiExceptionHandler {
 				.map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
 				.toList();
 		return new ApiError("validation_error", "Invalid request body", details);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ApiError handleQueryValidation(ConstraintViolationException ex) {
+		List<String> details = ex.getConstraintViolations()
+				.stream()
+				.map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+				.toList();
+		return new ApiError("validation_error", "Invalid request parameters", details);
+	}
+
+	@ExceptionHandler(ExternalApiException.class)
+	@ResponseStatus(HttpStatus.BAD_GATEWAY)
+	public ApiError handleExternalApiError(ExternalApiException ex) {
+		return new ApiError("external_api_error", ex.getMessage(), List.of());
 	}
 
 	public record ApiError(

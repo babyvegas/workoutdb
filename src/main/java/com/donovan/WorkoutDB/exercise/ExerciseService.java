@@ -32,6 +32,11 @@ public class ExerciseService {
 		}
 	}
 
+	public boolean createIfNotExists(ExerciseRequest request) {
+		ExerciseRequest normalized = normalize(request);
+		return exerciseRepository.createIfNotExists(normalized);
+	}
+
 	public Exercise update(Long id, ExerciseRequest request) {
 		ExerciseRequest normalized = normalize(request);
 		try {

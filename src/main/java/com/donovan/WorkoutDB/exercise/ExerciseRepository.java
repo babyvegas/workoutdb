@@ -71,6 +71,19 @@ public class ExerciseRepository {
 				.orElseThrow(() -> new IllegalStateException("Could not load created exercise"));
 	}
 
+	public boolean createIfNotExists(ExerciseRequest request) {
+		return jdbcTemplate.update(
+				"""
+						INSERT OR IGNORE INTO exercises (name, instructions, primary_muscle, secondary_muscle)
+						VALUES (?, ?, ?, ?)
+						""",
+				request.name(),
+				request.instructions(),
+				request.primaryMuscle(),
+				request.secondaryMuscle()
+		) > 0;
+	}
+
 	public Optional<Exercise> update(Long id, ExerciseRequest request) {
 		int updatedRows = jdbcTemplate.update(
 				"""

@@ -39,6 +39,7 @@ Al arrancar, se crea automáticamente la base local y se cargan ejercicios inici
 - `POST /api/exercises` -> crea un ejercicio.
 - `PUT /api/exercises/{id}` -> actualiza un ejercicio.
 - `DELETE /api/exercises/{id}` -> elimina un ejercicio.
+- `POST /api/exercises/import/wger` -> importa ejercicios reales desde el API gratuito de wger.
 
 ## Ejemplo de creación
 
@@ -52,3 +53,15 @@ curl -X POST http://localhost:8080/api/exercises \
     "secondaryMuscle": "Antebrazo"
   }'
 ```
+
+## Importación real desde wger (gratis)
+
+Endpoint:
+
+```bash
+curl -X POST "http://localhost:8080/api/exercises/import/wger?language=2&limit=300"
+```
+
+- `language`: id de idioma en wger (por ejemplo `2` suele ser inglés).
+- `limit`: cantidad máxima a intentar importar (1-2000).
+- El importador evita duplicados por nombre en tu base local.
